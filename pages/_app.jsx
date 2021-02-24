@@ -1,5 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
+import './styles.css';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../src/api';
 

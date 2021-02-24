@@ -75,10 +75,8 @@ const Login = () => {
     );
   }
 
-  
-
   return (
-    <div>      
+    <div>
       <Head>
         <title>Login</title>
       </Head>
@@ -154,7 +152,7 @@ const Login = () => {
                   >
                     Log in
                   </Button>
-                  Or <Link href="/register">register now to Supra!</Link>
+                  Or <Link href="/register">register now!</Link>
                 </Form.Item>
               </Form>
             </div>
@@ -164,7 +162,6 @@ const Login = () => {
       </div>
     </div>
   );
-  
 };
 
 export default Login;
