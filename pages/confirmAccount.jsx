@@ -17,9 +17,8 @@ const ConfirmAccount = () => {
 
   useEffect(() => {
     (async () => {
-      const {
-        query: { id, token },
-      } = await router;
+      const { id, token } = router.query;
+      
       await confirm({
         variables: { id: parseInt(id, 10), token },
       }).catch((reason) => {

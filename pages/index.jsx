@@ -9,11 +9,25 @@ import {
   ProfileOutlined,
   UnorderedListOutlined,
   UserOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
-import { Col, Divider, Dropdown, Layout, Menu, Row, Space } from 'antd';
+import {
+  Button,
+  Col,
+  Divider,
+  Dropdown,
+  Layout,
+  Menu,
+  Row,
+  Space,
+  Spin,
+} from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import React, { useState } from 'react';
 import Lesson from '../src/components/Lesson';
+import { useRouter } from 'next/router';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_USER, JOIN_ZOOM } from '../src/api';
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -33,55 +47,82 @@ const menu = (
 );
 
 const App = () => {
-  // const { loading, error, data } = useQuery(GET_USER);
-  // const router = useRouter();
-
-  // if (loading) {
-  //   return (
-  //     <div
-  //       style={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         marginTop: 100,
-  //       }}
-  //     >
-  //       <Spin
-  //         tip="Please wait..."
-  //         indicator={<LoadingOutlined style={{ fontSize: 150 }} />}
-  //       />
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   router.push('/login');
-  //   return (
-  //     <div
-  //       style={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         marginTop: 100,
-  //       }}
-  //     >
-  //       <Spin
-  //         tip="Please wait..."
-  //         indicator={<LoadingOutlined style={{ fontSize: 150 }} />}
-  //       />
-  //     </div>
-  //   );
-  // }
-  //
-  //
-
+  const { loading, error, data } = useQuery(GET_USER);
+  const router = useRouter();
   const [collapse, setCollapse] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
+  const [joinZoom] = useMutation(JOIN_ZOOM);
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 100,
+        }}
+      >
+        <Spin
+          tip="Please wait..."
+          indicator={<LoadingOutlined style={{ fontSize: 150 }} />}
+        />
+      </div>
+    );
+  }
+
+  if (error) {
+    router.push('/login');
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 100,
+        }}
+      >
+        <Spin
+          tip="Please wait..."
+          indicator={<LoadingOutlined style={{ fontSize: 150 }} />}
+        />
+      </div>
+    );
+  }
 
   const currentPage = {
     1: <Lesson />,
     2: <div>Sub</div>,
     3: <div>Category</div>,
+    ...data.me.courses.reduce((p, course) => {
+      const joinCourseZoom = () =>
+        joinZoom({
+          variables: { courseId: course.id },
+        })
+          .then((result) => {
+            const zoomParams = result.data.joinZoom;
+
+            router.push(
+              `/zoom?topic=${zoomParams.topic}&password=${zoomParams.password}&signature=${zoomParams.signature}`
+            );
+          })
+          .catch((result) => {
+            console.log('here: ', result.toString());
+          });
+
+      return {
+        ...p,
+        [3 + course.id]: (
+          <div>
+            <h2>{course.name}</h2>
+            <h3>
+              {course.owner.firstName} {course.owner.secondName}
+            </h3>
+            <Button onClick={joinCourseZoom}>Join Zoom</Button>
+          </div>
+        ),
+      };
+    }, {}),
   };
 
   return (
@@ -118,6 +159,12 @@ const App = () => {
             <Menu.Item key="3" icon={<CalendarOutlined />}>
               Calendar
             </Menu.Item>
+            <Menu.Divider />
+            {data.me.courses.map((course) => (
+              <Menu.Item key={3 + course.id} icon={<BookOutlined />}>
+                {course.name}
+              </Menu.Item>
+            ))}
           </Menu>
         </Sider>
         <Layout style={{ marginLeft: collapse ? 80 : 200 }}>
@@ -137,7 +184,7 @@ const App = () => {
               </Col>
               <Col style={{ marginRight: 20 }}>
                 <Space>
-                  <span>Hello, Robert</span>
+                  <span>Hello, {data.me.firstName}</span>
                   <Dropdown overlay={menu} placement="bottomRight">
                     <Avatar
                       size="large"

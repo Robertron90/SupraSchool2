@@ -7,7 +7,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
-  uri: 'http://supraschool.online/api',
+  uri: 'https://supraschool.online/api',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -27,6 +27,8 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+export const sdkKey = "tLEQsegzliouexzcUscMPC48ltAXnisKKuQu";
+
 export const GET_USER = gql`
   query {
     me {
@@ -37,9 +39,27 @@ export const GET_USER = gql`
       isConfirmed
       phoneNumber
       password
+      courses {
+        owner {
+          firstName
+          secondName
+        }
+        name
+        id
+      }
     }
   }
 `;
+
+export const JOIN_ZOOM = gql`
+  mutation joinZoom($courseId: Int!) {
+    joinZoom(input: { courseId: $courseId }) {
+      topic
+      signature
+      password
+    }
+  }
+`
 
 export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
