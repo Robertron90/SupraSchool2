@@ -13,6 +13,46 @@ const VideoQuality = {
   Video_720P: 3,
 };
 
+const maxRowsColumns = (width, height) => ({
+  maxColumns: Math.max(1, Math.floor(width / (minCellWidth + cellOffset * 2))),
+  maxRows: Math.max(1, Math.floor(height / (minCellHeight + cellOffset * 2))),
+});
+
+const layoutCandidates = Array.from({ length: 9 })
+  .map((value, index) => {
+    const count = index + 1;
+    const mid = Math.ceil(count / 2);
+    const candidates = Array.from({ length: mid })
+      .map((v, i) => {
+        const row = i + 1;
+        const column = Math.ceil(count / row);
+        if (row < column) {
+          return [
+            {
+              row,
+              column,
+            },
+            {
+              row: column,
+              column: row,
+            },
+          ];
+        }
+        if (row === column) {
+          return [
+            {
+              row,
+              column,
+            },
+          ];
+        }
+        return [];
+      })
+      .reduce((prev, curr) => [...prev, ...curr], []);
+    return { count, candidates };
+  })
+  .reduce((prev, curr) => ({ ...prev, [curr.count]: curr.candidates }), {});
+
 function getVideoLayout(rootWidth, rootHeight, count) {
   /**
    * [1,count]
