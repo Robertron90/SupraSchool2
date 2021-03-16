@@ -109,12 +109,14 @@ const Zoom = () => {
   }
 
   const { topic, signature, password } = router.query;
-  const name = data === undefined? '' : `${data.me.firstName} ${data.me.secondName}`;
+  const name =
+    data === undefined ? '' : `${data.me.firstName} ${data.me.secondName}`;
 
   useEffect(() => {
     const init = async () => {
       await zmClient.init('en-US', `${window.location.origin}/lib`);
       try {
+        console.log(topic, signature, name, password);
         await zmClient.join(topic, signature, name, password);
         setMediaStream(zmClient.getMediaStream());
         setChatClient(zmClient.getChatClient());
@@ -132,6 +134,7 @@ const Zoom = () => {
 
   const onConnectionChange = useCallback(
     (payload) => {
+      console.log(payload);
       if (payload.state === 'Reconnecting') {
         setIsLoading(true);
         setIsFailover(true);
@@ -139,7 +142,7 @@ const Zoom = () => {
         if (reason === 'failover') {
           console.log('Session Disconnected');
         }
-      } else if (payload.state === 'Connected' && isFailover) {
+      } else if (payload.state === 'Connected') {
         setIsLoading(false);
       } else if (payload.state === 'Closed') {
         Model.warning({
