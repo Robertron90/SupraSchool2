@@ -116,10 +116,11 @@ const Zoom = () => {
     const init = async () => {
       await zmClient.init('en-US', `${window.location.origin}/lib`);
       try {
-        console.log(topic, signature, name, password);
-        await zmClient.join(topic, signature, name, password);
+        console.log(await zmClient.join(topic, signature, name, password));
         setMediaStream(zmClient.getMediaStream());
         setChatClient(zmClient.getChatClient());
+
+        setIsLoading(false);
       } catch (e) {
         console.log(e);
       }
@@ -143,7 +144,7 @@ const Zoom = () => {
           console.log('Session Disconnected');
         }
       } else if (payload.state === 'Connected') {
-        setIsLoading(false);
+        // setIsLoading(false);
       } else if (payload.state === 'Closed') {
         Model.warning({
           title: 'Session ended',
