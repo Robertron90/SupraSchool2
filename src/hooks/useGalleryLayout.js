@@ -1,11 +1,19 @@
 import { useCallback, useEffect, useState, MutableRefObject } from 'react';
 import { useRenderVideo } from './useRenderVideo';
 
-function getVideoLayout(
-  rootWidth,
-  rootHeight,
-  count,
-) {
+const aspectRatio = 16 / 9;
+const minCellWidth = 256;
+const minCellHeight = minCellWidth / aspectRatio;
+const cellOffset = 5;
+const maxCount = 9;
+const VideoQuality = {
+  Video_90P: 0,
+  Video_180P: 1,
+  Video_360P: 2,
+  Video_720P: 3,
+};
+
+function getVideoLayout(rootWidth, rootHeight, count) {
   /**
    * [1,count]
    */
@@ -17,13 +25,13 @@ function getVideoLayout(
   maxColumns = Math.min(maxColumns, count);
   const actualCount = Math.min(count, maxRows * maxColumns);
   const layoutOfCount = layoutCandidates[actualCount].filter(
-    (item) => item.row <= maxRows && item.column <= maxColumns,
+    (item) => item.row <= maxRows && item.column <= maxColumns
   );
   const preferredLayout = layoutOfCount
     .map((item) => {
       const { column, row } = item;
       const canonical = Math.floor(
-        Math.min(rootWidth / (16 * column), rootHeight / (9 * row)),
+        Math.min(rootWidth / (16 * column), rootHeight / (9 * row))
       );
       const cellWidth = canonical * 16 - cellOffset * 2;
       const cellHeight = canonical * 9 - cellOffset * 2;
@@ -42,7 +50,7 @@ function getVideoLayout(
         }
         return prev;
       },
-      { cellArea: 0, cellHeight: 0, cellWidth: 0, column: 0, row: 0 },
+      { cellArea: 0, cellHeight: 0, cellWidth: 0, column: 0, row: 0 }
     );
   const { cellWidth, cellHeight, column, row } = preferredLayout;
   const cellBoxWidth = cellWidth + cellOffset * 2;
@@ -51,7 +59,8 @@ function getVideoLayout(
   const verticalMargin = (rootHeight - cellBoxHeight * row) / 2 + cellOffset;
   const cellDimensions = [];
   const lastRowColumns = column - ((column * row) % actualCount);
-  const lastRowMargin = (rootWidth - cellBoxWidth * lastRowColumns) / 2 + cellOffset;
+  const lastRowMargin =
+    (rootWidth - cellBoxWidth * lastRowColumns) / 2 + cellOffset;
   let quality = VideoQuality.Video_90P;
   if (actualCount <= 4 && cellHeight >= 270) {
     quality = VideoQuality.Video_360P;
@@ -86,7 +95,7 @@ export function useGalleryLayout(
   isVideoDecodeReady,
   videoRef,
   dimension,
-  pagination,
+  pagination
 ) {
   const [visibleParticipants, setVisibleParticipants] = useState([]);
   const [layout, setLayout] = useState([]);
@@ -110,10 +119,12 @@ export function useGalleryLayout(
       } else {
         pageParticipants = participants
           .filter((user) => user.userId !== currentUser.userId)
-          .sort((user1, user2) => Number(user2.bVideoOn) - Number(user1.bVideoOn));
+          .sort(
+            (user1, user2) => Number(user2.bVideoOn) - Number(user1.bVideoOn)
+          );
         pageParticipants.splice(1, 0, currentUser);
         pageParticipants = pageParticipants.filter(
-          (_user, index) => Math.floor(index / pageSize) === page,
+          (_user, index) => Math.floor(index / pageSize) === page
         );
       }
       setVisibleParticipants(pageParticipants);
@@ -143,7 +154,7 @@ export function useGalleryLayout(
     videoRef,
     layout,
     subscribedVideos,
-    visibleParticipants,
+    visibleParticipants
   );
   return {
     visibleParticipants,

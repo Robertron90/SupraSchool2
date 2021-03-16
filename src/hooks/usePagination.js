@@ -1,6 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useMount } from './useUnmount';
 
+const aspectRatio = 16 / 9;
+const minCellWidth = 256;
+const minCellHeight = minCellWidth / aspectRatio;
+const cellOffset = 5;
+
 const maxRowsColumns = (width, height) => ({
   maxColumns: Math.max(1, Math.floor(width / (minCellWidth + cellOffset * 2))),
   maxRows: Math.max(1, Math.floor(height / (minCellHeight + cellOffset * 2))),
