@@ -61,6 +61,15 @@ export const JOIN_ZOOM = gql`
   }
 `
 
+export const JOIN_JITSI = gql`
+  mutation joinJitsi($courseId: Int!) {
+    joinJitsi(input: { courseId: $courseId }) {
+      roomName
+      signature
+    }
+  }
+`
+
 export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
     login(input: { email: $email, password: $password }) {

@@ -27,7 +27,7 @@ import React, { useState } from 'react';
 import Lesson from '../src/components/Lesson';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_USER, JOIN_ZOOM } from '../src/api';
+import { GET_USER, JOIN_JITSI, JOIN_ZOOM } from '../src/api';
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -52,6 +52,7 @@ const App = () => {
   const [collapse, setCollapse] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
   const [joinZoom] = useMutation(JOIN_ZOOM);
+  const [joinJitsi] = useMutation(JOIN_JITSI);
 
   if (loading) {
     return (
@@ -110,6 +111,21 @@ const App = () => {
             console.log('here: ', result.toString());
           });
 
+      const joinCourseJitsi = () =>
+        joinJitsi({
+          variables: { courseId: course.id },
+        })
+          .then((result) => {
+            const jitsiParams = result.data.joinJitsi;
+
+            router.push(
+              `/jitsi?roomName=${jitsiParams.roomName}&signature=${jitsiParams.signature}`
+            );
+          })
+          .catch((result) => {
+            console.log('here: ', result.toString());
+          });
+
       return {
         ...p,
         [3 + course.id]: (
@@ -119,6 +135,7 @@ const App = () => {
               {course.owner.firstName} {course.owner.secondName}
             </h3>
             <Button onClick={joinCourseZoom}>Join Zoom</Button>
+            <Button onClick={joinCourseJitsi}>Join Jitsi</Button>
           </div>
         ),
       };
