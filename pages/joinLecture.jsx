@@ -9,7 +9,9 @@ const JoinLecture = () => {
   const router = useRouter();
   const [joinLecture] = useMutation(JOIN_LECTURE);
   const { id } = router.query;
-  const { userLoading, userError, userData } = useQuery(GET_USER);
+  const { loading: userLoading, error: userError, data: userData } = useQuery(
+    GET_USER
+  );
   const { loading, error, data } = useQuery(GET_LECTURE, {
     variables: { id },
   });
