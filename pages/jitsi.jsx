@@ -5,7 +5,7 @@ const Jitsi = () => {
   const jitsiContainerId = 'jitsi-container-id';
   const router = useRouter();
   const [jitsi, setJitsi] = React.useState({});
-  const { roomName, signature } = router.query;
+  const { roomName, signature, subject } = router.query;
 
   const loadJitsiScript = () => {
     let resolveLoadJitsiScriptPromise = null;
@@ -32,6 +32,7 @@ const Jitsi = () => {
       roomName,
       jwt: signature,
       configOverwrite: {
+        ...(subject) && { subject },
         prejoinPageEnabled: false,
         startWithAudioMuted: false,
         startWithVideoMuted: true

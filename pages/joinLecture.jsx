@@ -18,7 +18,7 @@ const JoinLecture = () => {
 
   useEffect(() => {
     (async () => {
-      if (!userData) {
+      if (!userData || !data) {
         return;
       }
 
@@ -29,10 +29,10 @@ const JoinLecture = () => {
       ).data.joinIntroductionLecture;
 
       router.push(
-        `/jitsi?roomName=${jitsiParams.roomName}&signature=${jitsiParams.signature}`
-      );
+        `/jitsi?roomName=${jitsiParams.roomName}&signature=${jitsiParams.signature}&subject=${data.introductionLecture.name}`
+    );
     })();
-  }, [userData]);
+  }, [userData, data]);
 
   if (loading || userLoading) {
     return (
@@ -60,7 +60,7 @@ const JoinLecture = () => {
     ).data.joinIntroductionLecture;
 
     router.push(
-      `/jitsi?roomName=${jitsiParams.roomName}&signature=${jitsiParams.signature}`
+      `/jitsi?roomName=${jitsiParams.roomName}&signature=${jitsiParams.signature}&subject=${data.introductionLecture.name}`
     );
   };
 
