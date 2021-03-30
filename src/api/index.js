@@ -27,7 +27,7 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export const sdkKey = "tLEQsegzliouexzcUscMPC48ltAXnisKKuQu";
+export const sdkKey = 'tLEQsegzliouexzcUscMPC48ltAXnisKKuQu';
 
 export const GET_USER = gql`
   query {
@@ -59,7 +59,7 @@ export const JOIN_ZOOM = gql`
       password
     }
   }
-`
+`;
 
 export const JOIN_JITSI = gql`
   mutation joinJitsi($courseId: Int!) {
@@ -68,7 +68,24 @@ export const JOIN_JITSI = gql`
       signature
     }
   }
-`
+`;
+
+export const GET_LECTURE = gql`
+  query getLecture($id: String!) {
+    introductionLecture(id: $id) {
+      name
+    }
+  }
+`;
+
+export const JOIN_LECTURE = gql`
+  mutation joinIntroductionLecture($id: String!, $displayName: String) {
+    joinIntroductionLecture(input: { id: $id, displayName: $displayName }) {
+      roomName
+      signature
+    }
+  }
+`;
 
 export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
