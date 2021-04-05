@@ -10,6 +10,7 @@ import {
   UnorderedListOutlined,
   UserOutlined,
   LoadingOutlined,
+  FormOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -25,6 +26,7 @@ import {
 import Avatar from 'antd/lib/avatar/avatar';
 import React, { useState } from 'react';
 import Lesson from '../src/components/Lesson';
+import LecturesEditor from '../src/components/LecturesEditor';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_USER, JOIN_JITSI, JOIN_ZOOM } from '../src/api';
@@ -95,6 +97,13 @@ const App = () => {
     1: <Lesson />,
     2: <div>Sub</div>,
     3: <div>Category</div>,
+    ...(data.me.role == 'ADMIN'
+      ? {
+          4: (
+            <LecturesEditor/>
+          ),
+        }
+      : {}),
     ...data.me.courses.reduce((p, course) => {
       const joinCourseZoom = () =>
         joinZoom({
@@ -128,7 +137,7 @@ const App = () => {
 
       return {
         ...p,
-        [3 + course.id]: (
+        [(data.me.role == 'ADMIN' ? 4 : 3) + course.id]: (
           <div>
             <h2>{course.name}</h2>
             <h3>
@@ -177,8 +186,17 @@ const App = () => {
               Calendar
             </Menu.Item>
             <Menu.Divider />
+            {data.me.role == 'ADMIN' && (
+              <Menu.Item key="4" icon={<FormOutlined />}>
+                Introduction Lessons
+              </Menu.Item>
+            )}
+            <Menu.Divider />
             {data.me.courses.map((course) => (
-              <Menu.Item key={3 + course.id} icon={<BookOutlined />}>
+              <Menu.Item
+                key={(data.me.role == 'ADMIN' ? 4 : 3) + course.id}
+                icon={<BookOutlined />}
+              >
                 {course.name}
               </Menu.Item>
             ))}

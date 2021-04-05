@@ -38,6 +38,7 @@ export const GET_USER = gql`
       email
       isConfirmed
       phoneNumber
+      role
       password
       courses {
         owner {
@@ -73,6 +74,24 @@ export const JOIN_JITSI = gql`
 export const GET_LECTURE = gql`
   query getLecture($id: String!) {
     introductionLecture(id: $id) {
+      name
+    }
+  }
+`;
+
+export const GET_LECTURES = gql`
+  query {
+    introductionLectures {
+      id
+      name
+    }
+  }
+`;
+
+export const CREATE_LECTURE = gql`
+  mutation createIntroductionLecture($name: String!) {
+    createIntroductionLecture(input: { name: $name }) {
+      id
       name
     }
   }
