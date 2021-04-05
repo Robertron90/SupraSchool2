@@ -99,9 +99,7 @@ const App = () => {
     3: <div>Category</div>,
     ...(data.me.role == 'ADMIN'
       ? {
-          4: (
-            <LecturesEditor/>
-          ),
+          4: <LecturesEditor />,
         }
       : {}),
     ...data.me.courses.reduce((p, course) => {
@@ -176,30 +174,34 @@ const App = () => {
               setPageIndex(parseInt(key, 10));
             }}
           >
-            <Menu.Item key="1" icon={<BookOutlined />}>
-              New Lesson
-            </Menu.Item>
-            <Menu.Item key="2" icon={<UnorderedListOutlined />}>
-              Past Lessons
-            </Menu.Item>
-            <Menu.Item key="3" icon={<CalendarOutlined />}>
-              Calendar
-            </Menu.Item>
-            <Menu.Divider />
+            <Menu.ItemGroup key="general" title="General">
+              <Menu.Item key="1" icon={<BookOutlined />}>
+                New Lesson
+              </Menu.Item>
+              <Menu.Item key="2" icon={<UnorderedListOutlined />}>
+                Past Lessons
+              </Menu.Item>
+              <Menu.Item key="3" icon={<CalendarOutlined />}>
+                Calendar
+              </Menu.Item>
+            </Menu.ItemGroup>
             {data.me.role == 'ADMIN' && (
-              <Menu.Item key="4" icon={<FormOutlined />}>
-                Introduction Lessons
-              </Menu.Item>
+              <Menu.ItemGroup key="admin" title="Admin Menu">
+                <Menu.Item key="4" icon={<FormOutlined />}>
+                  Introduction Lessons
+                </Menu.Item>
+              </Menu.ItemGroup>
             )}
-            <Menu.Divider />
-            {data.me.courses.map((course) => (
-              <Menu.Item
-                key={(data.me.role == 'ADMIN' ? 4 : 3) + course.id}
-                icon={<BookOutlined />}
-              >
-                {course.name}
-              </Menu.Item>
-            ))}
+            <Menu.ItemGroup key="courses" title="My Courses">
+              {data.me.courses.map((course) => (
+                <Menu.Item
+                  key={(data.me.role == 'ADMIN' ? 4 : 3) + course.id}
+                  icon={<BookOutlined />}
+                >
+                  {course.name}
+                </Menu.Item>
+              ))}
+            </Menu.ItemGroup>
           </Menu>
         </Sider>
         <Layout style={{ marginLeft: collapse ? 80 : 200 }}>
