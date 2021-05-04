@@ -97,6 +97,14 @@ export const CREATE_LECTURE = gql`
   }
 `;
 
+export const DELETE_LECTURE = gql`
+  mutation deleteIntroductionLecture($id: String!) {
+    deleteIntroductionLecture(input: { id: $id }) {
+      deleted
+    }
+  }
+`
+
 export const JOIN_LECTURE = gql`
   mutation joinIntroductionLecture($id: String!, $displayName: String) {
     joinIntroductionLecture(input: { id: $id, displayName: $displayName }) {
