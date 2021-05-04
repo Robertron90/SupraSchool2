@@ -27,26 +27,11 @@ import Avatar from 'antd/lib/avatar/avatar';
 import React, { useState } from 'react';
 import Lesson from '../src/components/Lesson';
 import LecturesEditor from '../src/components/LecturesEditor';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_USER, JOIN_JITSI, JOIN_ZOOM } from '../src/api';
 
 const { Header, Sider, Content, Footer } = Layout;
-
-const menu = (
-  <Menu>
-    <Menu.Item icon={<ProfileOutlined />}>
-      <span style={{ padding: 10 }}>Profile</span>
-    </Menu.Item>
-    <Menu.Item icon={<MoneyCollectOutlined />}>
-      <span style={{ padding: 10 }}>Payment</span>
-    </Menu.Item>
-    <Menu.Divider />
-    <Menu.Item icon={<LogoutOutlined />}>
-      <span style={{ padding: 10 }}>Logout</span>
-    </Menu.Item>
-  </Menu>
-);
 
 const App = () => {
   const { loading, error, data } = useQuery(GET_USER);
@@ -222,7 +207,23 @@ const App = () => {
               <Col style={{ marginRight: 20 }}>
                 <Space>
                   <span>Hello, {data.me.firstName}</span>
-                  <Dropdown overlay={menu} placement="bottomRight">
+                  <Dropdown
+                    overlay={
+                      <Menu
+                        onClick={({ key }) => {
+                          if (key == 'logout') {
+                            window.localStorage.removeItem('__jwt');
+                            router.reload('/login')
+                          }
+                        }}
+                      >
+                        <Menu.Item key="logout" icon={<LogoutOutlined />}>
+                          <span style={{ padding: 10 }}>Logout</span>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                    placement="bottomRight"
+                  >
                     <Avatar
                       size="large"
                       icon={<UserOutlined />}
